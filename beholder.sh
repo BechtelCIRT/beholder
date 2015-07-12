@@ -1,7 +1,7 @@
 #!/bin/bash
 ############################################
 #Beholder v1.0 - ELK/BRO/Libtrace
-#Created By: Chris Pavan and Jason Azzarella
+#Created By: Jason Azzarella and Chris Pavan
 #Problems or Feature Requests?
 #E-mail Us: jmazzare@bechtel.com
 ############################################
