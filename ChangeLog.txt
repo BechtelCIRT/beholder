@@ -1,0 +1,24 @@
+Change Log
+
+Beholder V1.00.001
+
+Current Versions
+
+* ElasticSearch: 1.6.0
+* Logstash: 1.5.2
+* Kibana: 4.1.1
+* Bro: 2.4
+
+Feature Changes
+
+* Elasticsearch
+	* Added Integer type fields for the duration and bytes fields from Bro. 
+	
+* Kibana
+	* Because of the change in field types, SUM/Min/Max for Kibana dashboards can now properly function against the bytes and duration field.
+
+Bug Fix
+
+* Bro
+	* Unable to compile Git code
+		* Changed from getting Bro from git to pulling from their website.

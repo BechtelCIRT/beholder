@@ -1,6 +1,6 @@
 #!/bin/bash
 ############################################
-#Beholder v1.0 - ELK/BRO/Libtrace
+#Beholder v1.00.001 - ELK/BRO/Libtrace
 #Created By: Jason Azzarella and Chris Pavan
 #Problems or Feature Requests?
 #E-mail Us: jmazzare@bechtel.com
@@ -64,8 +64,9 @@ cd /opt/
 mkdir /opt/broinstall
 mkdir /opt/bro
 cd /opt/broinstall
-git clone --recursive git://git.bro.org/bro
-cd /opt/broinstall/bro
+wget https://www.bro.org/downloads/release/bro-2.4.tar.gz
+tar -zxvf bro*
+cd /opt/broinstall/bro-2.4
 ./configure --prefix=/opt/bro
 make
 make install
@@ -148,13 +149,18 @@ cat <<'EOF' > /opt/elasticsearch/config/templates/bro.json
        } ],
        "properties" : {
          "@version": { "type": "string", "index": "not_analyzed" },
-         "geoip"  : {
-           "type" : "object",
-             "dynamic": true,
-             "path": "full",
-             "properties" : {
-               "location" : { "type" : "geo_point" }
-             }
+		 "dest_ip_bytes" : { "index_name": "dest_ip_bytes", "type": "integer", "ignore_malformed": true, "index": "analyzed" },
+		 "dest_bytes" : { "index_name": "dest_bytes ", "type": "integer", "ignore_malformed": true, "index": "analyzed" },
+		 "dest_ip_bytes" : { "index_name": "dest_ip_bytes", "type": "integer", "ignore_malformed": true, "index": "analyzed" },
+		 "dest_pkts" : { "index_name": "dest_pkts", "type": "integer", "ignore_malformed": true, "index": "analyzed" },
+		 "duration" : { "index_name": "duration", "type": "float", "ignore_malformed": true, "index": "analyzed" },
+		 "missed_bytes" : { "index_name": "missed_bytes", "type": "integer", "ignore_malformed": true, "index": "analyzed" },
+		 "missing_bytes" : { "index_name": "missing_bytes", "type": "integer", "ignore_malformed": true, "index": "analyzed" },
+		 "seen_bytes" : { "index_name": "seen_bytes", "type": "integer", "ignore_malformed": true, "index": "analyzed" },
+		 "src_bytes" : { "index_name": "src_bytes", "type": "integer", "ignore_malformed": true, "index": "analyzed" },
+		 "src_ip_bytes" : { "index_name": "src_ip_bytes", "type": "integer", "ignore_malformed": true, "index": "analyzed" },
+		 "src_pkts" : { "index_name": "src_pkts", "type": "integer", "ignore_malformed": true, "index": "analyzed" },
+		 "total_bytes" : { "index_name": "total_bytes", "type": "integer", "ignore_malformed": true, "index": "analyzed" }
          }
        }
     }

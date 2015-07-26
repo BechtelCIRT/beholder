@@ -1,5 +1,5 @@
 ############################################
-#Beholder v1.0 - ELK/BRO/Libtrace
+#Beholder v1.00.001 - ELK/BRO/Libtrace
 #Created By: Jason Azzarella and Chris Pavan
 #Problems or Feature Requests?
 #E-mail Us: jmazzare@bechtel.com
@@ -44,3 +44,13 @@ Beholder is a shell script which installs and configures essentials to peer into
 
 * Tracesplit Example
 	* Capture data from interface eth0 - sudo /opt/libtrace/tools/tracesplit/tracesplit -z 6 -Z gzip int:eth0 erf:/pcaps/capture.gz
+	
+'''What's in a Version Name?'''
+
+Version numbers get confusing so I'm adding an explanation as to what matters for versions of this script.
+
+EX 1.00.001
+
+The first set of digits (1) represents major tool additions and new functionality.
+The second set of digits (00) represents upgraded versions of tools such as Bro, Elasticsearch, Logstash.
+The third set of digits (001) represents tweaks to the scripts, changes to the templates or all around fixes to the code.
