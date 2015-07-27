@@ -1,5 +1,20 @@
 Change Log
 
+Beholder V1.01.000
+
+Current Versions
+
+* ElasticSearch: 1.7.0 - Updated
+* Logstash: 1.5.3 - Updated
+* Kibana: 4.1.1
+* Bro: 2.4
+
+Feature Changes
+
+* Elasticsearch
+	* Curator
+		* Added "--prefix bro" to the cronjob so that custom indices will not be caught.
+
 Beholder V1.00.001
 
 Current Versions
