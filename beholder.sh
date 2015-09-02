@@ -1,6 +1,6 @@
 #!/bin/bash
 ############################################
-#Beholder v1.01.000 - ELK/BRO/Libtrace
+#Beholder v1.02.000 - ELK/BRO/Libtrace
 #Created By: Jason Azzarella and Chris Pavan
 #Problems or Feature Requests?
 #E-mail Us: jmazzare@bechtel.com
@@ -44,11 +44,11 @@ apt-get install -y unzip bless cmake make gcc g++ flex bison libpcap-dev libssl-
 #####################
 echo "[+] Installing ELK Stack"
 cd /opt/
-wget https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.0.tar.gz
+wget https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.1.tar.gz
 tar -zxvf *.tar.gz
 rm -rf *.tar.gz
 mv elastic* elasticsearch
-wget https://download.elastic.co/logstash/logstash/logstash-1.5.3.tar.gz
+wget https://download.elastic.co/logstash/logstash/logstash-1.5.4.tar.gz
 tar -zxvf *.tar.gz
 rm -rf *.tar.gz
 mv logstash* logstash
@@ -505,7 +505,7 @@ echo "[+] Fixin your crons!"
 cd /opt/
 cat <<EOF > cron
 0-59/5 * * * * /opt/bro/bin/broctl cron
-0 0 * * * curator --host localhost --port 9200 close indices --older-than 30 --time-unit days --timestring '%Y.%m.%d' --prefix bro
+0 0 * * * /usr/local/bin/curator --host localhost --port 9200 close indices --older-than 30 --time-unit days --timestring '%Y.%m.%d' --prefix bro
 EOF
 crontab cron
 rm -rf cron
