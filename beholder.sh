@@ -1,6 +1,6 @@
 #!/bin/bash
 ############################################
-#Beholder v1.02.000 - ELK/BRO/Libtrace
+#Beholder v1.03.000 - ELK/BRO/Libtrace
 #Created By: Jason Azzarella and Chris Pavan
 #Problems or Feature Requests?
 #E-mail Us: jmazzare@bechtel.com
@@ -44,7 +44,7 @@ apt-get install -y unzip bless cmake make gcc g++ flex bison libpcap-dev libssl-
 #####################
 echo "[+] Installing ELK Stack"
 cd /opt/
-wget https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.1.tar.gz
+wget https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.2.tar.gz
 tar -zxvf *.tar.gz
 rm -rf *.tar.gz
 mv elastic* elasticsearch
@@ -52,7 +52,7 @@ wget https://download.elastic.co/logstash/logstash/logstash-1.5.4.tar.gz
 tar -zxvf *.tar.gz
 rm -rf *.tar.gz
 mv logstash* logstash
-wget https://download.elastic.co/kibana/kibana/kibana-4.1.1-linux-x64.tar.gz
+wget https://download.elastic.co/kibana/kibana/kibana-4.1.2-linux-x64.tar.gz
 tar -zxvf *.tar.gz
 rm -rf *.tar.gz
 mv kibana-* kibana
@@ -64,9 +64,9 @@ cd /opt/
 mkdir /opt/broinstall
 mkdir /opt/bro
 cd /opt/broinstall
-wget https://www.bro.org/downloads/release/bro-2.4.tar.gz
+wget https://www.bro.org/downloads/release/bro-2.4.1.tar.gz
 tar -zxvf bro*
-cd /opt/broinstall/bro-2.4
+cd /opt/broinstall/bro-2.4.1
 ./configure --prefix=/opt/bro
 make
 make install

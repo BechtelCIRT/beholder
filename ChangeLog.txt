@@ -1,5 +1,14 @@
 Change Log
 
+Beholder V1.03.000
+
+Current Versions
+
+* ElasticSearch: 1.7.2 - Updated
+* Logstash: 1.5.4
+* Kibana: 4.1.2 - Updated
+* Bro: 2.4.1 - Updated
+
 Beholder V1.02.000
 
 Current Versions
