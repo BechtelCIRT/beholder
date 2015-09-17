@@ -1,5 +1,5 @@
 ############################################
-#Beholder v1.03.000 - ELK/BRO/Libtrace
+#Beholder v1.03.001 - ELK/BRO/Libtrace
 #Created By: Jason Azzarella and Chris Pavan
 #Problems or Feature Requests?
 #E-mail Us: jmazzare@bechtel.com
@@ -19,7 +19,7 @@ Beholder is a shell script which installs and configures essentials to peer into
 
 '''Software Requirements'''
 
-* Ubuntu 14.04 x64
+* Ubuntu 14.04 x64 or Ubuntu 15.04 x64
 
 '''Hardware Minimum Requirements’’’
 

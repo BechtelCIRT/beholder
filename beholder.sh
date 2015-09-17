@@ -1,6 +1,6 @@
 #!/bin/bash
 ############################################
-#Beholder v1.03.000 - ELK/BRO/Libtrace
+#Beholder v1.03.001 - ELK/BRO/Libtrace
 #Created By: Jason Azzarella and Chris Pavan
 #Problems or Feature Requests?
 #E-mail Us: jmazzare@bechtel.com
@@ -17,6 +17,28 @@ rootcheck() {
 	fi
 }
 rootcheck
+#####################
+#Check Ubuntu Version
+#####################
+echo "[+] Ubuntu Version Check."
+apt-get install -y lsb-core
+version=$(lsb_release -a | grep Release | awk '{print $2}' | sed 's/\..*//')
+versioncheck() {
+	if [ $version = "15" ]; then
+		echo "You are on Ubuntu:" $version
+		echo "Your Ubuntu version is supported. Installing init support."
+		apt-get install -y upstart-sysv
+		update-initramfs -u
+	elif [ $version = "14" ]; then
+		echo "You are on Ubuntu:" $version
+		echo "Your Ubuntu version is supported."
+	else
+		echo "Beholder does not support version" $version
+		echo "Exiting Beholder."
+		exit
+	fi
+}
+versioncheck
 #####################
 #Build File Structure
 #####################
@@ -38,7 +60,7 @@ cat <<EOF > curator.list
 deb http://packages.elasticsearch.org/curator/3/debian stable main
 EOF
 apt-get update
-apt-get install -y unzip bless cmake make gcc g++ flex bison libpcap-dev libssl-dev python-dev swig zlib1g-dev git default-jdk dh-autoreconf python-elasticsearch-curator
+apt-get install -y unzip bless lsb-core cmake make gcc g++ flex bison libpcap-dev libssl-dev python-dev swig zlib1g-dev git default-jdk dh-autoreconf python-elasticsearch-curator
 #####################
 #Installing ELK Stack
 #####################
@@ -291,7 +313,7 @@ start () {
     fi
 }
 stop () {
-    echo "Stoping $name"
+    echo "Stopping $name"
     start-stop-daemon --stop --quiet --oknodo --pidfile "$pid_file"
     echo "$name stopped"
 }
@@ -348,7 +370,7 @@ start () {
     fi
 }
 stop () {
-    echo "Stoping $name"
+    echo "Stopping $name"
     start-stop-daemon --stop --quiet --oknodo --pidfile "$pid_file"
     echo "$name stopped"
 }
@@ -405,7 +427,7 @@ start () {
     fi
 }
 stop () {
-    echo "Stoping $name"
+    echo "Stopping $name"
     start-stop-daemon --stop --quiet --oknodo --pidfile "$pid_file"
     echo "$name stopped"
 }
@@ -462,7 +484,7 @@ start () {
     fi
 }
 stop () {
-    echo "Stoping $name"
+    echo "Stopping $name"
     start-stop-daemon --stop --quiet --oknodo --pidfile "$pid_file"
     echo "$name stopped"
 }
