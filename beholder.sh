@@ -1,6 +1,6 @@
 #!/bin/bash
 ############################################
-#Beholder v1.03.001 - ELK/BRO/Libtrace
+#Beholder V1.04.001 - ELK/BRO/Libtrace
 #Created By: Jason Azzarella and Chris Pavan
 #Problems or Feature Requests?
 #E-mail Us: jmazzare@bechtel.com
@@ -21,15 +21,20 @@ rootcheck
 #Check Ubuntu Version
 #####################
 echo "[+] Ubuntu Version Check."
+apt-get update
 apt-get install -y lsb-core
 version=$(lsb_release -a | grep Release | awk '{print $2}' | sed 's/\..*//')
 versioncheck() {
 	if [ $version = "15" ]; then
 		echo "You are on Ubuntu:" $version
 		echo "Your Ubuntu version is supported. Installing init support."
-		apt-get install -y upstart-sysv
+		apt-get install -y upstart-sysv openjdk-8-jre
 		update-initramfs -u
 	elif [ $version = "14" ]; then
+		sudo add-apt-repository ppa:webupd8team/java -y
+		sudo apt-get update
+		echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
+		sudo apt-get install oracle-java8-installer -y
 		echo "You are on Ubuntu:" $version
 		echo "Your Ubuntu version is supported."
 	else
@@ -39,6 +44,14 @@ versioncheck() {
 	fi
 }
 versioncheck
+clear
+#######################
+#Creating Beholder User
+#######################
+echo "[+] Creating beholder user. Prepare to create a password."
+useradd beholder
+adduser beholder sudo
+passwd beholder
 #####################
 #Build File Structure
 #####################
@@ -60,21 +73,21 @@ cat <<EOF > curator.list
 deb http://packages.elasticsearch.org/curator/3/debian stable main
 EOF
 apt-get update
-apt-get install -y unzip bless lsb-core cmake make gcc g++ flex bison libpcap-dev libssl-dev python-dev swig zlib1g-dev git default-jdk dh-autoreconf python-elasticsearch-curator
+apt-get install -y unzip bless lsb-core cmake make gcc g++ flex bison libpcap-dev libssl-dev python-dev swig zlib1g-dev git dh-autoreconf python-elasticsearch-curator
 #####################
 #Installing ELK Stack
 #####################
 echo "[+] Installing ELK Stack"
 cd /opt/
-wget https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.2.tar.gz
+wget https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.0.0/elasticsearch-2.0.0.tar.gz
 tar -zxvf *.tar.gz
 rm -rf *.tar.gz
 mv elastic* elasticsearch
-wget https://download.elastic.co/logstash/logstash/logstash-1.5.4.tar.gz
+wget https://download.elastic.co/logstash/logstash/logstash-2.0.0.tar.gz
 tar -zxvf *.tar.gz
 rm -rf *.tar.gz
 mv logstash* logstash
-wget https://download.elastic.co/kibana/kibana/kibana-4.1.2-linux-x64.tar.gz
+wget https://download.elastic.co/kibana/kibana/kibana-4.2.0-linux-x64.tar.gz
 tar -zxvf *.tar.gz
 rm -rf *.tar.gz
 mv kibana-* kibana
@@ -143,61 +156,114 @@ node.name: beholder
 path.data: /logs/index
 path.logs: /logs/elasticsearch
 EOF
-#######################################
-#Configuration - Elasticsearch Template
-#######################################
-mkdir /opt/elasticsearch/config/templates
-cd /opt/elasticsearch/config/templates
-cat <<'EOF' > /opt/elasticsearch/config/templates/bro.json
-{
-  "template" : "bro*",
-  "settings" : {
-    "index.refresh_interval" : "5s"
-  },
-  "mappings" : {
-    "_default_" : {
-       "_all" : {"enabled" : true},
-       "dynamic_templates" : [ {
-         "string_fields" : {
-           "match" : "*",
-           "match_mapping_type" : "string",
-           "mapping" : {
-             "type" : "string", "index" : "analyzed", "omit_norms" : true,
-               "fields" : {
-                 "raw" : {"type": "string", "index" : "not_analyzed", "ignore_above" : 1024}
-               }
-           }
-         }
-       } ],
-       "properties" : {
-         "@version": { "type": "string", "index": "not_analyzed" },
-		 "dest_ip_bytes" : { "index_name": "dest_ip_bytes", "type": "integer", "ignore_malformed": true, "index": "analyzed" },
-		 "dest_bytes" : { "index_name": "dest_bytes ", "type": "integer", "ignore_malformed": true, "index": "analyzed" },
-		 "dest_ip_bytes" : { "index_name": "dest_ip_bytes", "type": "integer", "ignore_malformed": true, "index": "analyzed" },
-		 "dest_pkts" : { "index_name": "dest_pkts", "type": "integer", "ignore_malformed": true, "index": "analyzed" },
-		 "duration" : { "index_name": "duration", "type": "float", "ignore_malformed": true, "index": "analyzed" },
-		 "missed_bytes" : { "index_name": "missed_bytes", "type": "integer", "ignore_malformed": true, "index": "analyzed" },
-		 "missing_bytes" : { "index_name": "missing_bytes", "type": "integer", "ignore_malformed": true, "index": "analyzed" },
-		 "seen_bytes" : { "index_name": "seen_bytes", "type": "integer", "ignore_malformed": true, "index": "analyzed" },
-		 "src_bytes" : { "index_name": "src_bytes", "type": "integer", "ignore_malformed": true, "index": "analyzed" },
-		 "src_ip_bytes" : { "index_name": "src_ip_bytes", "type": "integer", "ignore_malformed": true, "index": "analyzed" },
-		 "src_pkts" : { "index_name": "src_pkts", "type": "integer", "ignore_malformed": true, "index": "analyzed" },
-		 "total_bytes" : { "index_name": "total_bytes", "type": "integer", "ignore_malformed": true, "index": "analyzed" }
-         }
-       }
-    }
-  }
-}
-EOF
 ################################
 #Configuration - Logstash Inputs
 ################################
 mkdir /opt/logstash/config
 cd /opt/logstash/config
+#####################################
+#Configuration - Logstash ES Template
+#####################################
+cat <<EOF > /opt/logstash/config/bro.json
+{
+    "template": "bro*",
+    "settings": {
+        "index.refresh_interval": "5s"
+    },
+    "mappings": {
+        "_default_": {
+            "_all": {
+                "enabled": true
+            },
+            "dynamic_templates": [
+                {
+                    "string_fields": {
+                        "match": "*",
+                        "match_mapping_type": "string",
+                        "mapping": {
+                            "type": "string",
+                            "index": "analyzed",
+                            "omit_norms": true,
+                            "fields": {
+                                "raw": {
+                                    "type": "string",
+                                    "index": "not_analyzed",
+                                    "ignore_above": 1024
+                                }
+                            }
+                        }
+                    }
+                }
+            ],
+            "properties": {
+                "@version": {
+                    "type": "string",
+                    "index": "not_analyzed"
+                },
+                "dest_ip_bytes": {
+                    "type": "integer",
+                    "ignore_malformed": true,
+                    "index": "analyzed"
+                },
+                "dest_bytes": {
+                    "type": "integer",
+                    "ignore_malformed": true,
+                    "index": "analyzed"
+                },
+                "dest_pkts": {
+                    "type": "integer",
+                    "ignore_malformed": true,
+                    "index": "analyzed"
+                },
+                "duration": {
+                    "type": "float",
+                    "ignore_malformed": true,
+                    "index": "analyzed"
+                },
+                "missed_bytes": {
+                    "type": "integer",
+                    "ignore_malformed": true,
+                    "index": "analyzed"
+                },
+                "missing_bytes": {
+                    "type": "integer",
+                    "ignore_malformed": true,
+                    "index": "analyzed"
+                },
+                "seen_bytes": {
+                    "type": "integer",
+                    "ignore_malformed": true,
+                    "index": "analyzed"
+                },
+                "src_bytes": {
+                    "type": "integer",
+                    "ignore_malformed": true,
+                    "index": "analyzed"
+                },
+                "src_ip_bytes": {
+                    "type": "integer",
+                    "ignore_malformed": true,
+                    "index": "analyzed"
+                },
+                "src_pkts": {
+                    "type": "integer",
+                    "ignore_malformed": true,
+                    "index": "analyzed"
+                },
+                "total_bytes": {
+                    "type": "integer",
+                    "ignore_malformed": true,
+                    "index": "analyzed"
+                }
+            }
+        }
+    }
+}
+EOF
 ####################################
 #Configuration - Logstash Bro Parser
 ####################################
-cat <<'EOF' > /opt/logstash/config/bro.conf
+cat <<EOF > /opt/logstash/config/bro.conf
 input {
         file {
                 path => "/logs/bro/spool/bro/files.log"
@@ -276,9 +342,11 @@ filter {
         }
 }
 output {
-        elasticsearch_http {
-                host => localhost
+        elasticsearch {
+                hosts => ["localhost:9200"]
                 index => "bro-%{+YYYY.MM.dd}"
+                template => "/opt/logstash/config/bro.json"
+                template_name => "bro*"
         }
         stdout {
                 codec => rubydebug
@@ -293,10 +361,9 @@ echo "[+] Setting up Init Scripts"
 #Logstash Init
 ##############
 cd /etc/init.d
-cat <<'EOF' > logstash-reader
+cat <<'EOF' > logstash
 . /lib/lsb/init-functions
-mode="reader"
-name="logstash-$mode"
+name="logstash"
 logstash_bin="-- /opt/logstash/bin/logstash"
 logstash_conf="/opt/logstash/config/bro.conf"
 logstash_log="/logs/logstash/$name.log"
@@ -305,8 +372,8 @@ NICE_LEVEL="-n 19"
 start () {
     command="/usr/bin/nice ${NICE_LEVEL} ${logstash_bin} agent -f $logstash_conf --log ${logstash_log} -- web"
 
-    log_daemon_msg "Starting $mode" "$name"
-    if start-stop-daemon --start --quiet --oknodo --pidfile "$pid_file" -b -m --exec $command; then
+    log_daemon_msg "Starting $name"
+    if start-stop-daemon --start --chuid "beholder" --quiet --oknodo --pidfile "$pid_file" -b -m --exec $command; then
         log_end_msg 0
     else
         log_end_msg 1
@@ -347,65 +414,8 @@ case $1 in
 esac
 exit 0
 EOF
-chmod +x logstash-reader
-update-rc.d logstash-reader defaults
-#########
-#Bro Init
-#########
-cd /etc/init.d
-cat <<'EOF' > bro
-. /lib/lsb/init-functions
-name="bro"
-bro="-- /opt/bro/bin/broctl"
-pid_file="/var/run/$name.pid"
-NICE_LEVEL="-n 19"
-start () {
-    command="/usr/bin/nice ${NICE_LEVEL} ${bro}"
-
-    log_daemon_msg "Starting $mode" "$name"
-    if start-stop-daemon --start --quiet --oknodo --pidfile "$pid_file" -b -m --exec $command; then
-        log_end_msg 0
-    else
-        log_end_msg 1
-    fi
-}
-stop () {
-    echo "Stopping $name"
-    start-stop-daemon --stop --quiet --oknodo --pidfile "$pid_file"
-    echo "$name stopped"
-}
-
-status () {
-    status_of_proc -p $pid_file "" "$name"
-}
-case $1 in
-    start)
-        if status; then exit 0; fi
-        start
-        ;;
-    stop)
-        stop
-        ;;
-    reload)
-        stop
-        start
-        ;;
-    restart)
-        stop
-        start
-        ;;
-    status)
-        status && exit 0 || exit $?
-        ;;
-    *)
-        echo "Usage: $0 {start|stop|restart|reload|status}"
-        exit 1
-        ;;
-esac
-exit 0
-EOF
-chmod +x bro
-update-rc.d bro defaults
+chmod +x logstash
+update-rc.d logstash defaults
 ###################
 #Elasticsearch Init
 ###################
@@ -420,7 +430,7 @@ start () {
     command="/usr/bin/nice ${NICE_LEVEL} ${elastic}"
 
     log_daemon_msg "Starting $mode" "$name"
-    if start-stop-daemon --start --quiet --oknodo --pidfile "$pid_file" -b -m --exec $command; then
+    if start-stop-daemon --start --chuid "beholder" --quiet --oknodo --pidfile "$pid_file" -b -m --exec $command; then
         log_end_msg 0
     else
         log_end_msg 1
@@ -477,7 +487,7 @@ start () {
     command="/usr/bin/nice ${NICE_LEVEL} ${kibana}"
 
     log_daemon_msg "Starting $mode" "$name"
-    if start-stop-daemon --start --quiet --oknodo --pidfile "$pid_file" -b -m --exec $command; then
+    if start-stop-daemon --start --chuid "beholder" --quiet --oknodo --pidfile "$pid_file" -b -m --exec $command; then
         log_end_msg 0
     else
         log_end_msg 1
@@ -531,6 +541,11 @@ cat <<EOF > cron
 EOF
 crontab cron
 rm -rf cron
+######################
+#CHOWNing your system!
+######################
+chown -R beholder:beholder /logs
+chown -R beholder:beholder /opt
 #########
 #Finished
 #########

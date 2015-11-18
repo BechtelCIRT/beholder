@@ -1,8 +1,27 @@
 Change Log
 
+------------------
+Beholder V1.04.001
+------------------
 Current Versions
 
+* ElasticSearch: 2.0 - Updated
+* Logstash: 2.0 - Updated
+* Kibana: 4.2 - Updated
+* Bro: 2.4.1
+
+Feature Changes
+
+* User Beholder is created.
+	* Script will prompt for a password.
+	* ELK should no longer run as root.
+* Bro init script removed as the bro cron will keep it running.
+* Java 8 replaced 7.
+
+------------------
 Beholder V1.03.001
+------------------
+Current Versions
 
 * ElasticSearch: 1.7.2
 * Logstash: 1.5.4
@@ -16,8 +35,9 @@ Feature Changes
 * INIT
 	* "Stoping" is now "stopping"... Yay!
 
+------------------
 Beholder V1.03.000
-
+------------------
 Current Versions
 
 * ElasticSearch: 1.7.2 - Updated
@@ -25,8 +45,9 @@ Current Versions
 * Kibana: 4.1.2 - Updated
 * Bro: 2.4.1 - Updated
 
+------------------
 Beholder V1.02.000
-
+------------------
 Current Versions
 
 * ElasticSearch: 1.7.1 - Updated
@@ -39,8 +60,9 @@ Feature Changes
 * Cron
 	* Fixed an issue with curator running from cron.
 
+------------------
 Beholder V1.01.000
-
+------------------
 Current Versions
 
 * ElasticSearch: 1.7.0 - Updated
@@ -54,8 +76,9 @@ Feature Changes
 	* Curator
 		* Added "--prefix bro" to the cronjob so that custom indices will not be caught.
 
+------------------
 Beholder V1.00.001
-
+------------------
 Current Versions
 
 * ElasticSearch: 1.6.0
