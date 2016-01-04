@@ -1,22 +1,18 @@
 Change Log
 
 ------------------
-Beholder V1.04.001
+Beholder V1.05.000
 ------------------
 Current Versions
 
-* ElasticSearch: 2.0 - Updated
-* Logstash: 2.0 - Updated
-* Kibana: 4.2 - Updated
+* ElasticSearch: 2.1.1 - Updated
+* Logstash: 2.1.1 - Updated
+* Kibana: 4.3.1 - Updated
 * Bro: 2.4.1
 
 Feature Changes
 
-* User Beholder is created.
-	* Script will prompt for a password.
-	* ELK should no longer run as root.
-* Bro init script removed as the bro cron will keep it running.
-* Java 8 replaced 7.
+NA
 
 ------------------
 Beholder V1.03.001

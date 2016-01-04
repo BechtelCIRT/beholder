@@ -1,5 +1,5 @@
 ############################################
-#Beholder V1.04.001 - ELK/BRO/Libtrace
+#Beholder V1.05.000 - ELK/BRO/Libtrace
 #Created By: Jason Azzarella and Chris Pavan
 #Problems or Feature Requests?
 #E-mail Us: jmazzare@bechtel.com

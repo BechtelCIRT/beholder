@@ -1,6 +1,6 @@
 #!/bin/bash
 ############################################
-#Beholder V1.04.001 - ELK/BRO/Libtrace
+#Beholder V1.05.000 - ELK/BRO/Libtrace
 #Created By: Jason Azzarella and Chris Pavan
 #Problems or Feature Requests?
 #E-mail Us: jmazzare@bechtel.com
@@ -79,15 +79,15 @@ apt-get install -y unzip bless lsb-core cmake make gcc g++ flex bison libpcap-de
 #####################
 echo "[+] Installing ELK Stack"
 cd /opt/
-wget https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.0.0/elasticsearch-2.0.0.tar.gz
+wget https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.1.1/elasticsearch-2.1.1.tar.gz
 tar -zxvf *.tar.gz
 rm -rf *.tar.gz
 mv elastic* elasticsearch
-wget https://download.elastic.co/logstash/logstash/logstash-2.0.0.tar.gz
+wget https://download.elastic.co/logstash/logstash/logstash-2.1.1.tar.gz
 tar -zxvf *.tar.gz
 rm -rf *.tar.gz
 mv logstash* logstash
-wget https://download.elastic.co/kibana/kibana/kibana-4.2.0-linux-x64.tar.gz
+wget https://download.elastic.co/kibana/kibana/kibana-4.3.1-linux-x64.tar.gz
 tar -zxvf *.tar.gz
 rm -rf *.tar.gz
 mv kibana-* kibana
