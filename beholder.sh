@@ -1,6 +1,6 @@
 #!/bin/bash
 ############################################
-#Beholder V1.05.000 - ELK/BRO/Libtrace
+#Beholder V1.06.000 - ELK/BRO/Libtrace
 #Created By: Jason Azzarella and Chris Pavan
 #Problems or Feature Requests?
 #E-mail Us: jmazzare@bechtel.com
@@ -49,7 +49,7 @@ clear
 #Creating Beholder User
 #######################
 echo "[+] Creating beholder user. Prepare to create a password."
-useradd beholder
+useradd beholder -m -d /home/beholder
 adduser beholder sudo
 passwd beholder
 #####################
@@ -63,6 +63,8 @@ mkdir /logs/index
 mkdir /logs/bro/spool
 mkdir /logs/logstash
 mkdir /pcaps/
+mkdir /home/beholder
+chown beholder:beholder /home/beholder
 #####################################
 #Installing Updates and Dependencies.
 #####################################
@@ -79,15 +81,15 @@ apt-get install -y unzip bless lsb-core cmake make gcc g++ flex bison libpcap-de
 #####################
 echo "[+] Installing ELK Stack"
 cd /opt/
-wget https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.1.1/elasticsearch-2.1.1.tar.gz
+wget https://www.dropbox.com/s/r27jwgo13d0hnga/elasticsearch-2.2.1.tar.gz
 tar -zxvf *.tar.gz
 rm -rf *.tar.gz
 mv elastic* elasticsearch
-wget https://download.elastic.co/logstash/logstash/logstash-2.1.1.tar.gz
+wget https://www.dropbox.com/s/gz4txuatpcl5sbh/logstash-2.2.2.tar.gz
 tar -zxvf *.tar.gz
 rm -rf *.tar.gz
 mv logstash* logstash
-wget https://download.elastic.co/kibana/kibana/kibana-4.3.1-linux-x64.tar.gz
+wget https://www.dropbox.com/s/pv9xj6dl2sa8mk8/kibana-4.4.2-linux-x64.tar.gz
 tar -zxvf *.tar.gz
 rm -rf *.tar.gz
 mv kibana-* kibana
@@ -369,6 +371,7 @@ logstash_conf="/opt/logstash/config/bro.conf"
 logstash_log="/logs/logstash/$name.log"
 pid_file="/var/run/$name.pid"
 NICE_LEVEL="-n 19"
+HOME=/home/beholder
 start () {
     command="/usr/bin/nice ${NICE_LEVEL} ${logstash_bin} agent -f $logstash_conf --log ${logstash_log} -- web"
 
@@ -546,6 +549,10 @@ rm -rf cron
 ######################
 chown -R beholder:beholder /logs
 chown -R beholder:beholder /opt
+######################
+#Clearing Certificates
+######################
+update-ca-certificates -f
 #########
 #Finished
 #########

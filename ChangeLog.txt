@@ -1,6 +1,25 @@
 Change Log
 
 ------------------
+Beholder V1.06.000
+------------------
+Current Versions
+
+* ElasticSearch: 2.2.1 - Updated
+* Logstash: 2.2.2 - Updated
+* Kibana: 4.4.2 - Updated
+* Bro: 2.4.1
+
+Feature Changes
+
+NA
+
+Fixes
+
+* Added beholder HOME directory.
+* Tossed the ELK stack into a dropbox location as there tends to be frequent updates and this will allow the script to always be relevant.
+
+------------------
 Beholder V1.05.000
 ------------------
 Current Versions
