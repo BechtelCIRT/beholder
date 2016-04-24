@@ -36,6 +36,10 @@ Beholder is a shell script which installs and configures essentials to peer into
 
 '''Details'''
 
+* Linux User beholder
+	* Pass beholder
+* Basic Auth User beholder
+	* Pass beholder
 * Kibana Interface - https://localhost
 	* Use a web browser to access your Kibana instance.
 	* On your first load, you will be required to insert the elasticsearch index.
