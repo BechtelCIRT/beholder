@@ -1,6 +1,30 @@
 Change Log
 
 ------------------
+Beholder V1.07.000
+------------------
+Current Versions
+
+* ElasticSearch: 2.2.1
+* Logstash: 2.2.2
+* Kibana: 4.4.2
+* Bro: 2.4.1
+
+Feature Changes
+
+* Script now contains Apache and Kibana is served up via https. No longer required to hit 5601.
+* Apache sets itself up with a self-signed certificate.
+* Basic Auth now implemented to access Kibana.
+* UFW turned on with default allow and blocking kibana from external.
+* Special Message added to the script.
+
+Fixes
+
+* Beholder no longer added to sudo.
+* Bit of changes to the script so that there is less interaction required from the user.
+* User and Pass beholder/beholder for both basic auth and Linux user.
+
+------------------
 Beholder V1.06.000
 ------------------
 Current Versions

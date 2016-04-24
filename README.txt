@@ -1,5 +1,5 @@
 ############################################
-#Beholder V1.06.000 - ELK/BRO/Libtrace
+#Beholder V1.07.000 - ELK/BRO/Libtrace
 #Created By: Jason Azzarella and Chris Pavan
 #Problems or Feature Requests?
 #E-mail Us: jmazzare@bechtel.com
@@ -30,13 +30,13 @@ Beholder is a shell script which installs and configures essentials to peer into
 '''Installation'''
 
 * Run the beholder script. Don't forget to sudo!
-* Enter a password for the "beholder" user.
 * Enter the interface that you would like to monitor.
-* At completion, reboot the system.
+* At completion, the system will countdown and reboot.
+* Keep watch for the special message!
 
 '''Details'''
 
-* Kibana Interface - http://localhost:5601
+* Kibana Interface - https://localhost
 	* Use a web browser to access your Kibana instance.
 	* On your first load, you will be required to insert the elasticsearch index.
 		* Input bro* and select the @timestamp field from the timestamp dropdown.
