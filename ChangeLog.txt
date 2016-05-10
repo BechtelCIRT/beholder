@@ -17,7 +17,7 @@ Feature Changes
 
 Fixes
 
-* Changed the way filter from Logstash which should remove any previously failed parses.
+* Changed the filter from Logstash which should remove any previously failed parses.
 
 ------------------
 Beholder V1.07.000
