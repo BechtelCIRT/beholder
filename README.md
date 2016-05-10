@@ -1,10 +1,10 @@
-|------------------------------------------------|
-|Beholder V1.08.000 - ELK/BRO/Libtrace           |
-|Created By: Jason Azzarella and Chris Pavan     |
-|Problems or Feature Requests?                   |
-|E-mail Us: jmazzare@bechtel.com                 |
-|------------------------------------------------|
-
+# Beholder
+```
+Beholder V1.08.000 - ELK/BRO/Libtrace
+Created By: Jason Azzarella and Chris Pavan
+Problems or Feature Requests?
+E-mail Us: jmazzare@bechtel.com
+```
 Beholder is a shell script which installs and configures essentials to peer into your network activity. Monitor your network traffic with Bro IDS, build dashboards with Kibana to get a visual representation of your activity and obtain packet captures of the identified events with Tracesplit.
 
 ## Under the Hood
