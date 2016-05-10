@@ -1,6 +1,6 @@
 #!/bin/bash
 ############################################
-#Beholder V1.07.000 - ELK/BRO/Libtrace
+#Beholder V1.08.000 - ELK/BRO/Libtrace
 #Created By: Jason Azzarella and Chris Pavan
 #Problems or Feature Requests?
 #E-mail Us: jmazzare@bechtel.com
@@ -80,15 +80,15 @@ apt-get install -y apache2 apache2-utils unzip bless lsb-core cmake make gcc g++
 #####################
 echo "[+] Installing ELK Stack"
 cd /opt/
-wget https://www.dropbox.com/s/r27jwgo13d0hnga/elasticsearch-2.2.1.tar.gz
+wget https://www.dropbox.com/s/jikilywdcz3sryt/elasticsearch-2.3.2.tar.gz
 tar -zxvf *.tar.gz
 rm -rf *.tar.gz
 mv elastic* elasticsearch
-wget https://www.dropbox.com/s/gz4txuatpcl5sbh/logstash-2.2.2.tar.gz
+wget https://www.dropbox.com/s/c3ww7odx8dsnl9z/logstash-2.3.2.tar.gz
 tar -zxvf *.tar.gz
 rm -rf *.tar.gz
 mv logstash* logstash
-wget https://www.dropbox.com/s/pv9xj6dl2sa8mk8/kibana-4.4.2-linux-x64.tar.gz
+wget https://www.dropbox.com/s/h0bvni3nnpawdcg/kibana-4.5.0-linux-x64.tar.gz
 tar -zxvf *.tar.gz
 rm -rf *.tar.gz
 mv kibana-* kibana
@@ -201,57 +201,47 @@ cat <<EOF > /opt/logstash/config/bro.json
                     "type": "string",
                     "index": "not_analyzed"
                 },
-                "dest_ip_bytes": {
+                "bytes_seen": {
                     "type": "integer",
                     "ignore_malformed": true,
                     "index": "analyzed"
                 },
-                "dest_bytes": {
+                "bytes_total": {
                     "type": "integer",
                     "ignore_malformed": true,
                     "index": "analyzed"
                 },
-                "dest_pkts": {
+                "bytes_missing": {
                     "type": "integer",
                     "ignore_malformed": true,
                     "index": "analyzed"
                 },
-                "duration": {
-                    "type": "float",
-                    "ignore_malformed": true,
-                    "index": "analyzed"
-                },
-                "missed_bytes": {
+                "bytes_overflow": {
                     "type": "integer",
                     "ignore_malformed": true,
                     "index": "analyzed"
                 },
-                "missing_bytes": {
+                "bytes_origin": {
                     "type": "integer",
                     "ignore_malformed": true,
                     "index": "analyzed"
                 },
-                "seen_bytes": {
+                "bytes_response": {
                     "type": "integer",
                     "ignore_malformed": true,
                     "index": "analyzed"
                 },
-                "src_bytes": {
+                "bytes_source_ip": {
                     "type": "integer",
                     "ignore_malformed": true,
                     "index": "analyzed"
                 },
-                "src_ip_bytes": {
+                "bytes_response_ip": {
                     "type": "integer",
                     "ignore_malformed": true,
                     "index": "analyzed"
                 },
-                "src_pkts": {
-                    "type": "integer",
-                    "ignore_malformed": true,
-                    "index": "analyzed"
-                },
-                "total_bytes": {
+                "bytes_source": {
                     "type": "integer",
                     "ignore_malformed": true,
                     "index": "analyzed"
@@ -301,45 +291,387 @@ input {
                 type => "bro_smtp"
                 sincedb_path => "/logs/logstash/brosmtp"
         }
+        file {
+                path => "/logs/bro/spool/bro/known_modbus.log"
+                type => "bro_known_modbus"
+                sincedb_path => "/logs/logstash/knownmodbus"
+        }
+        file {
+                path => "/logs/bro/spool/bro/software.log"
+                type => "bro_software"
+                sincedb_path => "/logs/logstash/software"
+        }
+        file {
+                path => "/logs/bro/spool/bro/known_certs.log"
+                type => "bro_known_certs"
+                sincedb_path => "/logs/logstash/knowncerts"
+        }
+        file {
+                path => "/logs/bro/spool/bro/known_services.log"
+                type => "bro_known_services"
+                sincedb_path => "/logs/logstash/knownservices"
+        }
+        file {
+                path => "/logs/bro/spool/bro/known_hosts.log"
+                type => "bro_known_hosts"
+                sincedb_path => "/logs/logstash/knownhosts"
+        }
+        file {
+                path => "/logs/bro/spool/bro/x509.log"
+                type => "bro_x509"
+                sincedb_path => "/logs/logstash/x509"
+        }
+        file {
+                path => "/logs/bro/spool/bro/pe.log"
+                type => "bro_pe"
+                sincedb_path => "/logs/logstash/pe"
+        }
+        file {
+                path => "/logs/bro/spool/bro/known_devices.log"
+                type => "bro_known_devices"
+                sincedb_path => "/logs/logstash/knowndevices"
+        }
+        file {
+                path => "/logs/bro/spool/bro/communication.log"
+                type => "bro_communication"
+                sincedb_path => "/logs/logstash/communication"
+        }
+        file {
+                path => "/logs/bro/spool/bro/traceroute.log"
+                type => "bro_traceroute"
+                sincedb_path => "/logs/logstash/traceroute"
+        }
+        file {
+                path => "/logs/bro/spool/bro/app_stats.log"
+                type => "bro_app_stats"
+                sincedb_path => "/logs/logstash/appstats"
+        }
+        file {
+                path => "/logs/bro/spool/bro/dnp3.log"
+                type => "bro_dnp3"
+                sincedb_path => "/logs/logstash/dnp3"
+        }
+        file {
+                path => "/logs/bro/spool/bro/intel.log"
+                type => "bro_intel"
+                sincedb_path => "/logs/logstash/intel"
+        }
+        file {
+                path => "/logs/bro/spool/bro/modbus.log"
+                type => "bro_modbus"
+                sincedb_path => "/logs/logstash/modbus"
+        }
+        file {
+                path => "/logs/bro/spool/bro/modbus_register_change.log"
+                type => "bro_modbus_register_change"
+                sincedb_path => "/logs/logstash/modbusregisterchange"
+        }
+        file {
+                path => "/logs/bro/spool/bro/modbus_register_change.log"
+                type => "bro_modbus_register_change"
+                sincedb_path => "/logs/logstash/modbusregisterchange"
+        }
+        file {
+                path => "/logs/bro/spool/bro/ftp.log"
+                type => "bro_ftp"
+                sincedb_path => "/logs/logstash/ftp"
+        }
+        file {
+                path => "/logs/bro/spool/bro/irc.log"
+                type => "bro_irc"
+                sincedb_path => "/logs/logstash/irc"
+        }
+        file {
+                path => "/logs/bro/spool/bro/kerberos.log"
+                type => "bro_kerberos"
+                sincedb_path => "/logs/logstash/kerberos"
+        }
+        file {
+                path => "/logs/bro/spool/bro/mysql.log"
+                type => "bro_mysql"
+                sincedb_path => "/logs/logstash/mysql"
+        }
+        file {
+                path => "/logs/bro/spool/bro/notice.log"
+                type => "bro_notice"
+                sincedb_path => "/logs/logstash/notice"
+        }
+        file {
+                path => "/logs/bro/spool/bro/radius.log"
+                type => "bro_radius"
+                sincedb_path => "/logs/logstash/radius"
+        }
+        file {
+                path => "/logs/bro/spool/bro/rdp.log"
+                type => "bro_rdp"
+                sincedb_path => "/logs/logstash/rdp"
+        }
+        file {
+                path => "/logs/bro/spool/bro/sip.log"
+                type => "bro_sip"
+                sincedb_path => "/logs/logstash/sip"
+        }
+        file {
+                path => "/logs/bro/spool/bro/snmp.log"
+                type => "bro_snmp"
+                sincedb_path => "/logs/logstash/snmp"
+        }
+        file {
+                path => "/logs/bro/spool/bro/socks.log"
+                type => "bro_socks"
+                sincedb_path => "/logs/logstash/socks"
+        }
+        file {
+                path => "/logs/bro/spool/bro/ssh.log"
+                type => "bro_ssh"
+                sincedb_path => "/logs/logstash/ssh"
+        }
+        file {
+                path => "/logs/bro/spool/bro/syslog.log"
+                type => "bro_syslog"
+                sincedb_path => "/logs/logstash/syslog"
+        }
+        file {
+                path => "/logs/bro/spool/bro/tunnel.log"
+                type => "bro_tunnel"
+                sincedb_path => "/logs/logstash/tunnel"
+        }
+        file {
+                path => "/logs/bro/spool/bro/weird.log"
+                type => "bro_weird"
+                sincedb_path => "/logs/logstash/weird"
+        }
+        file {
+                path => "/logs/bro/spool/bro/signatures.log"
+                type => "bro_signatures"
+                sincedb_path => "/logs/logstash/signatures"
+        }
 }
 filter {
 		if ([message] =~ /^#/) {
         	drop{}
     	}
         else if [type] == "bro_files" {
-                grok {
-                        match => [ "message", "(?<time>(.*?))\t(?<bro_id>(.*?))\t(?<source_ip>(.*?))\t(?<dest_ip>(.*?))\t(?<conn_uids>(.*?))\t(?<source>(.*?))\t(?<depth>(.*?))\t(?<analyzers>(.*?))\t(?<mime_type>(.*?))\t(?<filename>(.*?))\t(?<duration>(.*?))\t(?<local_orig>(.*?))\t(?<is_orig>(.*?))\t(?<seen_bytes>(.*?))\t(?<total_bytes>(.*?))\t(?<missing_bytes>(.*?))\t(?<overflow_bytes>(.*?))\t(?<timedout>(.*?))\t(?<parent_fuid>(.*?))\t(?<md5>(.*?))\t(?<sha1>(.*?))\t(?<sha256>(.*?))\t(?<extracted>(.*?))" ]
+                csv {
+                        columns => ["time","fuid","transmit","receive","conn_uids","bro_type","depth","analyzers","mime_type","filename","duration","local_orig","is_orig","bytes_seen","bytes_total","bytes_missing","bytes_overflow","timedout","parent_fuid","md5","sha1","sha256","extracted"]
+                        separator => "	"
                         }
         }
         else if [type] == "bro_dhcp" {
-                grok {
-                        match => [ "message", "(?<time>(.*?))\t(?<bro_id>(.*?))\t(?<source_ip>(.*?))\t(?<source_port>(.*?))\t(?<dest_ip>(.*?))\t(?<dest_port>(.*?))\t(?<mac>(.*?))\t(?<assigned_ip>(.*?))\t(?<lease_time>(.*?))\t(?<trans_id>(.*?))" ]
+                csv {
+                        columns => ["time","bro_id","source","source_port","destination","destination_port","mac","assigned_ip","lease_time","trans_id"]
+                        separator => "	"
                         }
         }
         else if [type] == "bro_http" {
-                grok {
-                        match => [ "message", "(?<time>(.*?))\t(?<bro_id>(.*?))\t(?<source_ip>(.*?))\t(?<source_port>(.*?))\t(?<dest_ip>(.*?))\t(?<dest_port>(.*?))\t(?<depth>(.*?))\t(?<method>(.*?))\t(?<domain>(.*?))\t(?<uri>(.*?))\t(?<referrer>(.*?))\t(?<user_agent>(.*?))\t(?<request_length>(.*?))\t(?<response_length>(.*?))\t(?<status_code>(.*?))\t(?<status_msg>(.*?))\t(?<info_code>(.*?))\t(?<info_msg>(.*?))\t(?<filename>(.*?))\t(?<tags>(.*?))\t(?<username>(.*?))\t(?<password>(.*?))\t(?<proxied>(.*?))\t(?<orig_fuids>(.*?))\t(?<orig_mime_types>(.*?))\t(?<resp_fuids>(.*?))\t(?<resp_mime_types>(.*?))" ]
+                csv {
+                        columns => ["time","bro_id","source","source_port","destination","destination_port","trans_depth","method","host","uri","referrer","user_agent","request_body_len","response_body_len","status_code","status_msg","info_code","info_msg","filename","tags","username","password","proxied","orig_fuids","orig_mime_types","resp_fuids","resp_mime_types"]
+                        separator => "	"
                         }
         }
         else if [type] == "bro_ssl" {
-                grok {
-                        match => [ "message", "(?<time>(.*?))\t(?<bro_id>(.*?))\t(?<source_ip>(.*?))\t(?<source_port>(.*?))\t(?<dest_ip>(.*?))\t(?<dest_port>(.*?))\t(?<version>(.*?))\t(?<cypher>(.*?))\t(?<curve>(.*?))\t(?<server_name>(.*?))\t(?<resumed>(.*?))\t(?<last_alert>(.*?))\t(?<next_protocol>(.*?))\t(?<established>(.*?))\t(?<cert_chain_fuids>(.*?))\t(?<client_cert_chain_fuids>(.*?))\t(?<subject>(.*?))\t(?<issuer>(.*?))\t(?<client_subject>(.*?))\t(?<client_issuer>(.*?))\t(?<validation_status>(.*?))" ]
+                csv {
+                        columns => ["time","bro_id","source","source_port","destination","destination_port","version","cipher","curve","server_name","resumed","last_alert","next_protocol","established","cert_chain_fuids","client_cert_chain_fuids","subject","issuer","client_subject","client_issuer","validation_status"]
+                        separator => "	"
                         }
         }
         else if [type] == "bro_dns" {
-                grok {
-                        match => [ "message", "(?<time>(.*?))\t(?<bro_id>(.*?))\t(?<source_ip>(.*?))\t(?<source_port>(.*?))\t(?<dest_ip>(.*?))\t(?<dest_port>(.*?))\t(?<proto>(.*?))\t(?<trans_id>(.*?))\t(?<query>(.*?))\t(?<qclass>(.*?))\t(?<qclass_name>(.*?))\t(?<qtype>(.*?))\t(?<qtype_name>(.*?))\t(?<rcode>(.*?))\t(?<rcode_name>(.*?))\t(?<AA>(.*?))\t(?<TC>(.*?))\t(?<RD>(.*?))\t(?<RA>(.*?))\t(?<Z>(.*?))\t(?<answers>(.*?))\t(?<ttls>(.*?))\t(?<rejected>(.*?))" ]
+                csv {
+                        columns => ["time","bro_id","source","source_port","destination","destination_port","proto","trans_id","query","qclass","qclass_name","qtype","qtype_name","rcode","rcode_name","AA","TC","RD","RA","Z","answers","TTLs","rejected"]
+                        separator => "	"
                         }
         }
         else if [type] == "bro_conn" {
-                grok {
-                        match => [ "message", "(?<time>(.*?))\t(?<bro_id>(.*?))\t(?<source_ip>(.*?))\t(?<source_port>(.*?))\t(?<dest_ip>(.*?))\t(?<dest_port>(.*?))\t(?<proto>(.*?))\t(?<service>(.*?))\t(?<duration>(.*?))\t(?<src_bytes>(.*?))\t(?<dest_bytes>(.*?))\t(?<state>(.*?))\t(?<local_orig>(.*?))\t(?<local_resp>(.*?))\t(?<missed_bytes>(.*?))\t(?<history>(.*?))\t(?<src_pkts>(.*?))\t(?<src_ip_bytes>(.*?))\t(?<dest_pkts>(.*?))\t(?<dest_ip_bytes>(.*?))\t(?<tunnel_parents>(.*?))" ]
+                csv {
+                        columns => ["time","bro_id","source","source_port","destination","destination_port","proto","service","duration","bytes_origin","bytes_response","conn_state","local_orig","local_resp","bytes_missing","history","orig_pkts","bytes_source_ip","resp_pkts","bytes_response_ip","tunnel_parents"]
+                        separator => "	"
                         }
         }
         else if [type] == "bro_smtp" {
-                grok {
-                        match => [ "message", "(?<time>(.*?))\t(?<bro_id>(.*?))\t(?<id.orig_h>(.*?))\t(?<id.resp_h>(.*?))\t(?<id.resp_p>(.*?))\t(?<trans_depth>(.*?))\t(?<helo>(.*?))\t(?<mailfrom>(.*?))\t(?<rcptto>(.*?))\t(?<date>(.*?))\t(?<from>(.*?))\t(?<to>(.*?))\t(?<reply_to>(.*?))\t(?<msg_id>(.*?))\t(?<in_reply_to>(.*?))\t(?<subject>(.*?))\t(?<x_originating_ip>(.*?))\t(?<first_received>(.*?))\t(?<second_received>(.*?))\t(?<last_reply>(.*?))\t(?<path>(.*?))\t(?<user_agent>(.*?))" ]
-                		}
+                csv {
+                        columns => ["time","bro_id","source","source_port","destination","destination_port","trans_depth","helo","mailfrom","rcptto","date","from","to","reply_to","msg_id","in_reply_to","subject","x_originating_ip","first_received","second_received","last_reply","path","user_agent","tls","fuids","is_webmail"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_known_modbus" {
+                csv {
+                        columns => ["time","source","device_type"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_software" {
+                csv {
+                        columns => ["time","source","source_port","software_type","name","version.major","version.minor","version.minor2","version.minor3","version.addl","unparsed_version"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_known_certs" {
+                csv {
+                        columns => ["time","source","source_port","subject","issuer_subject","serial"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_known_services" {
+                csv {
+                        columns => ["time","source","source_port","port_proto","service"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_known_hosts" {
+                csv {
+                        columns => ["time","source"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_x509" {
+                csv {
+                        columns => ["time","source","certificate.version","certificate.serial","certificate.subject","certificate.issuer","certificate.not_valid_before","certificate.not_valid_after","certificate.key_alg","certificate.sig_alg","certificate.key_type","certificate.key_length","certificate.exponent","certificate.curve","san.dns","san.uri","san.email","san.ip","basic_constraints.ca","basic_constraints.path_len"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_pe" {
+                csv {
+                        columns => ["time","source","machine","compile_ts","os","subsystem","is_exe","is_64bit","uses_aslr","uses_dep","uses_code_integrity","uses_seh","has_import_table","has_export_table","has_cert_table","has_debug_data","section_names"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_known_devices" {
+                csv {
+                        columns => ["time","mac","dhcp_host_name"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_communication" {
+                csv {
+                        columns => ["time","peer","source","connected_peer_desc","connected_peer_addr","connected_peer_port","level","bromessage"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_traceroute" {
+                csv {
+                        columns => ["time","src","dst","proto"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_app_stats" {
+                csv {
+                        columns => ["time","ts_delta","app","uniq_hosts","hits","bytes_source"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_dnp3" {
+                csv {
+                        columns => ["time","bro_id","source","fc_request","fc_reply","iin"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_intel" {
+                csv {
+                        columns => ["time","bro_id","source","fuid","file_mime_type","file_desc","seen","sources"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_modbus" {
+                csv {
+                        columns => ["time","bro_id","source","func","exception","track_address"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_modbus_register_change" {
+                csv {
+                        columns => ["time","bro_id","source","register","old_val","new_val","delta"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_ftp" {
+                csv {
+                        columns => ["time","bro_id","source","source_port","destination","destination_port","user","password","command","arg","mime_type","file_size","reply_code","reply_msg","data_channel","cwd","cmdarg","pending_commands","passive","capture_password","fuid","File","unique","ID","last_auth_requested"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_irc" {
+                csv {
+                        columns => ["time","bro_id","source","source_port","destination","destination_port","nick","user","command","value","addl","dcc_file_name","dcc_file_size","dcc_mime_type","fuid"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_kerberos" {
+                csv {
+                        columns => ["time","bro_id","source","source_port","destination","destination_port","request_type","client","service","success","error_code","error_msg","from","till","cipher","forwardable","renewable","logged","client_cert","client_cert_subject","client_cert_fuid","server_cert","server_cert_subject","server_cert_fuid"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_mysql" {
+                csv {
+                        columns => ["time","bro_id","source","source_port","destination","destination_port","cmd","arg","success","rows","response"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_notice" {
+                csv {
+                        columns => ["time","bro_id","source","source_port","destination","destination_port","fuid","file_mime_type","file_desc","proto","note","msg","sub","src","dst","p","n","peer_descr","actions","suppress_for","dropped","remote_location.country_code","remote_location.region","remote_location.city","remote_location.latitude","remote_location.longitude"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_radius" {
+                csv {
+                        columns => ["time","bro_id","source","source_port","destination","destination_port","username","mac","remote_ip","connect_info","result","logged"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_rdp" {
+                csv {
+                        columns => ["time","bro_id","source","source_port","destination","destination_port","cookie","result","security_protocol","keyboard_layout","client_build","client_name","client_dig_product_id","desktop_width","desktop_height","requested_color_depth","cert_type","cert_count","cert_permanent","encryption_level","encryption_method","analyzer_id","done","ssl"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_sip" {
+                csv {
+                        columns => ["time","bro_id","source","source_port","destination","destination_port","trans_depth","method","uri","date","request_from","request_to","response_from","response_to","reply_to","call_id","seq","subject","request_path","response_path","user_agent","status_code","status_msg","warning","request_body_len","response_body_len","content_type"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_snmp" {
+                csv {
+                        columns => ["time","bro_id","source","source_port","destination","destination_port","duration","version","community","get_requests","get_bulk_requests","get_responses","set_requests","display_string","up_since"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_socks" {
+                csv {
+                        columns => ["time","bro_id","source","source_port","destination","destination_port","version","user","password","status","request","request_p","bound","bound_p"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_ssh" {
+                csv {
+                        columns => ["time","bro_id","source","source_port","destination","destination_port","version","auth_success","direction","client","server","cipher_alg","mac_alg","compression_alg","kex_alg","host_key_alg","host_key","logged","num_failures","capabilities","remote_location"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_syslog" {
+                csv {
+                        columns => ["time","bro_id","source","source_port","destination","destination_port","proto","facility","severity","bromessage"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_tunnel" {
+                csv {
+                        columns => ["time","bro_id","source","source_port","destination","destination_port","tunnel_type","action"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_weird" {
+                csv {
+                        columns => ["time","bro_id","source","source_port","destination","destination_port","name","addl","notice","peer"]
+                        separator => "	"
+                        }
+        }
+        else if [type] == "bro_signatures" {
+                csv {
+                        columns => ["time","bro_id","source","source_port","destination","destination_port","note","sig_id","event_msg","sub_msg","sig_count","host_count"]
+                        separator => "	"
+                        }
         }
 }
 output {

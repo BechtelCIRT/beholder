@@ -1,6 +1,25 @@
 Change Log
 
 ------------------
+Beholder V1.08.000
+------------------
+Current Versions
+
+* ElasticSearch: 2.3.2 - Upgraded
+* Logstash: 2.3.2 - Upgraded
+* Kibana: 4.5.0 - Upgraded
+* Bro: 2.4.1
+
+Feature Changes
+
+* Added 30 other log sources from Bro which feeds into the ELK stack. This totals up to about 37.
+* A lot of fields have been normalized. Any "bytes" field has been changed to "bytes_(x)" to make it easier to poke through.
+
+Fixes
+
+* Changed the way filter from Logstash which should remove any previously failed parses.
+
+------------------
 Beholder V1.07.000
 ------------------
 Current Versions
