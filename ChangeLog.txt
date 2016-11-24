@@ -1,6 +1,28 @@
 Change Log
 
 ------------------
+Beholder V1.09.000
+------------------
+Current Versions
+
+* ElasticSearch: 5.0 - Upgraded
+* Logstash: 5.0 - Upgraded
+* Kibana: 5.0 - Upgraded
+* Bro: 2.5 - Upgraded
+
+Changes
+
+* Upgraded to be used on Ubuntu 16!
+* Changed autostart functionality from upstart to systemd.
+* ELK and Bro upgraded to the newest version.
+* File is now executable. Install should be done as sudo ./beholder.
+* Now Proxy capable!
+* All input requirements are now upfront.
+  * You can now select a different IP/interface between Bro and the ELK bound IP.
+* Curator is no longer auto-configured for closing out elk indexes.
+* Removed some of the app clutter from app-get install.
+
+------------------
 Beholder V1.08.000
 ------------------
 Current Versions

@@ -1,6 +1,6 @@
 # Beholder
 ```
-Beholder V1.08.000 - ELK/BRO/Libtrace
+Beholder V1.09.000 - ELK/BRO/Libtrace
 Created By: Jason Azzarella and Chris Pavan
 Problems or Feature Requests?
 E-mail Us: jmazzare@bechtel.com
@@ -11,7 +11,7 @@ Beholder is a shell script which installs and configures essentials to peer into
 
 - ELK Stack (https://www.elastic.co)
   - Elasticsearch
-    - Curator (pre-set to close out indexes older than 30 days)
+    - Curator
   - Logstash
   - Kibana
 - Bro IDS (https://www.bro.org/)
@@ -19,7 +19,7 @@ Beholder is a shell script which installs and configures essentials to peer into
 
 ## Software Requirements
 
-- Ubuntu 14.04 x64 or Ubuntu 15.04 x64
+- Ubuntu 16.04 x64
 
 ## Hardware Minimum Requirements
 
@@ -29,8 +29,8 @@ Beholder is a shell script which installs and configures essentials to peer into
 
 ## Installation
 
-- Run the beholder script. Don't forget to sudo!
-- Enter the interface that you would like to monitor.
+- Run the beholder script. Use sudo ./beholder.
+- Select the interface and IP address for monitoring and management.
 - At completion, the system will countdown and reboot.
 - Keep watch for the special message!
 
@@ -48,7 +48,7 @@ Beholder is a shell script which installs and configures essentials to peer into
   5. You should get over 200 fields after all have been populated at least once.
 
 - Tracesplit Example
-  - Capture data from interface eth0 - sudo /opt/libtrace/tools/tracesplit/tracesplit -z 6 -Z gzip int:eth0 erf:/pcaps/capture.gz
+  - Capture data from interface eth0 - sudo /opt/libtrace/bin/tracesplit -z 6 -Z gzip int:eth0 erf:/pcaps/capture.gz
 	
 ## What's in a Version Name?
 
