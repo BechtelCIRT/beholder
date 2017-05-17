@@ -1,6 +1,6 @@
 # Beholder
 ```
-Beholder V1.09.000 - ELK/BRO/Libtrace
+Beholder V1.10.000 - ELK/BRO/Libtrace
 Created By: Jason Azzarella and Chris Pavan
 Problems or Feature Requests?
 E-mail Us: jmazzare@bechtel.com
@@ -40,7 +40,7 @@ Beholder is a shell script which installs and configures essentials to peer into
   - Pass beholder
 - Basic Auth User beholder
   - Pass beholder
-- Kibana Interface - https://localhost
+- Kibana Interface - https://{Your Kibana IP}
   1. Use a web browser to access your Kibana instance.
   2. On your first load, you will be required to insert the elasticsearch index.
   3. Input bro* and select the @timestamp field from the timestamp dropdown.

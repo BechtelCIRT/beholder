@@ -1,6 +1,22 @@
 Change Log
 
 ------------------
+Beholder V1.10.000
+------------------
+Current Versions
+
+* ElasticSearch: 5.4 - Upgraded
+* Logstash: 5.4 - Upgraded
+* Kibana: 5.4 - Upgraded
+* Curator - Added
+
+Changes
+
+* Upgraded to new ELK version.
+* Added Curator functionality after the 5.x upgrades.
+ * Bro indices older than 30 days are now closed once a day via cron.
+
+------------------
 Beholder V1.09.000
 ------------------
 Current Versions

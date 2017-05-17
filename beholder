@@ -1,6 +1,6 @@
 #!/bin/bash
 ############################################
-#Beholder V1.09.000 - ELK/BRO/Libtrace
+#Beholder V1.10.000 - ELK/BRO/Libtrace
 #Created By: Jason Azzarella and Chris Pavan
 #Problems or Feature Requests?
 #E-mail Us: jmazzare@bechtel.com
@@ -23,9 +23,9 @@ rootcheck
 ########################
 #Declaring URL Variables
 ########################
-elasticsearchURL="https://www.dropbox.com/s/0nakz7mulbvrgc6/elasticsearch-5.0.0.tar.gz"
-logstashURL="https://www.dropbox.com/s/a57nab1ytu5huse/logstash-5.0.0.tar.gz"
-kibanaURL="https://www.dropbox.com/s/iy9aeci3x4jpjdo/kibana-5.0.0-linux-x86_64.tar.gz"
+elasticsearchURL="https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.4.0.tar.gz"
+logstashURL="https://artifacts.elastic.co/downloads/logstash/logstash-5.4.0.tar.gz"
+kibanaURL="https://artifacts.elastic.co/downloads/kibana/kibana-5.4.0-linux-x86_64.tar.gz"
 broURL="https://www.bro.org/downloads/bro-2.5.tar.gz"
 libtraceURL="http://research.wand.net.nz/software/libtrace/libtrace-latest.tar.bz2"
 libtraceWandURL="http://research.wand.net.nz/software/wandio/wandio-1.0.4.tar.gz"
@@ -72,10 +72,10 @@ systemUpdate() {
 		echo "[+] Starting download and install. This WILL take a while. Be cool!"
 		wget -qO - https://packages.elasticsearch.org/GPG-KEY-elasticsearch | sudo apt-key add -
 		cat <<EOF > /etc/apt/sources.list.d/curator.list
-deb http://packages.elasticsearch.org/curator/3/debian stable main
+deb http://packages.elasticsearch.org/curator/5/debian stable main
 EOF
 		apt-get update
-		apt-get install -y default-jre apache2 apache2-utils unzip lsb-core cmake make gcc g++ flex bison libpcap-dev libssl-dev python-dev swig zlib1g-dev git dh-autoreconf python-elasticsearch-curator
+		apt-get install -y default-jre apache2 apache2-utils unzip lsb-core cmake make gcc g++ flex bison libpcap-dev libssl-dev python-dev swig zlib1g-dev git dh-autoreconf elasticsearch-curator
   else
 		echo "Beholder does not support version" $version
 		echo "Exiting Beholder."
@@ -109,7 +109,7 @@ chown beholder:beholder /home/beholder
 echo "[+] Installing ELK Stack"
 cd /opt/
 wget $elasticsearchURL
-tar -zxvf *.tar.gz && rm -rf *.tar.gz && mv elastic* elasticsearch
+tar -zxvf *.tar.gz && rm -rf *.tar.gz && mv elasticsearch-5.4.0 elasticsearch
 wget $logstashURL
 tar -zxvf *.tar.gz && rm -rf *.tar.gz && mv logstash* logstash
 wget $kibanaURL
@@ -190,6 +190,54 @@ server.name: "beholder"
 elasticsearch.url: "http://$elkinput:9200"
 kibana.index: ".kibana"
 kibana.defaultAppId: "discover"
+EOF
+########################
+#Configuration - Curator
+########################
+mkdir /opt/elasticsearch-curator/config
+cd /opt/elasticsearch-curator/config
+cat <<EOF > curator-config.yml
+client:
+  hosts:
+    - $elkinput
+  port: 9200
+  url_prefix:
+  use_ssl: False
+  certificate:
+  client_cert:
+  client_key:
+  ssl_no_validate: False
+  http_auth:
+  timeout: 30
+  master_only: False
+
+logging:
+  loglevel: INFO
+  logfile:
+  logformat: default
+  blacklist: ['elasticsearch', 'urllib3']
+EOF
+##########################
+#Configuration - Curator 2
+##########################
+cd /opt/elasticsearch-curator/config
+cat <<EOF > curator.yml
+actions:
+  1:
+    action: close
+    options:
+      delete_aliases: False
+      disable_action: False
+    filters:
+    - filtertype: pattern
+      kind: prefix
+      value: bro-
+    - filtertype: age
+      source: name
+      direction: older
+      timestring: '%Y.%m.%d'
+      unit: days
+      unit_count: 30
 EOF
 ################################
 #Configuration - Logstash Inputs
@@ -821,6 +869,7 @@ echo "[+] Fixin your crons!"
 cd /opt/
 cat <<EOF > cron
 0-59/5 * * * * /opt/bro/bin/broctl cron
+0 0 * * * /opt/elasticsearch-curator/curator --config /opt/elasticsearch-curator/config/curator-config.yml /opt/elasticsearch-curator/config/curator.yml > /tmp/closed-index.txt
 EOF
 crontab cron
 rm -rf cron
